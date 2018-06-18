@@ -9,7 +9,7 @@ You can use the knife node show command to view data about your node. With the -
 Node Name:   node1-ubuntu
 Environment: _default
 FQDN:        node1-ubuntu
-IP:          192.168.145.134
+IP:          x.x.x.x
 Run List:    recipe[learn_chef_apache2]
 Roles:       
 Recipes:     learn_chef_apache2, learn_chef_apache2::default

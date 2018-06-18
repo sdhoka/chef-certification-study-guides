@@ -1,0 +1,100 @@
+# To run a particular cookbook_version
+recipe[cookbook_name::recipe_name@cookbook_version]
+
+# Knife bootstrap command
+knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name node1-ubuntu --run-list 'recipe[learn_chef_apache2]'
+
+# Knife check node config
+You can use the knife node show command to view data about your node. With the -l tag, this command will show the complete node object
+Node Name:   node1-ubuntu
+Environment: _default
+FQDN:        node1-ubuntu
+IP:          192.168.145.134
+Run List:    recipe[learn_chef_apache2]
+Roles:       
+Recipes:     learn_chef_apache2, learn_chef_apache2::default
+Platform:    ubuntu 14.04
+Tags:
+
+# Knife search
+https://docs.chef.io/chef_search.html
+knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user USER --identity-file IDENTITY_FILE --attribute ipaddress
+
+# Knife set runlist
+knife node run_list set node1-ubuntu "role[web]"
+knife node run_list add node1-ubuntu "recipe[apache]"
+
+# knife ssh command
+It enables you to update your node's configuration when your cookbook changes
+knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user vagrant --identity-file ~/.ssh/private_key --attribute ipaddress
+
+
+# Run chefspec tests
+# Also read on shared_examples, shared_context and let method in rspec
+cd <cookbook_directory>
+chef exec rspec --color spec/unit/recipes/*.rb
+
+# ChefSpec Example
+require 'spec_helper'
+
+describe 'webserver_test::default' do
+  let(:chef_run) do
+    runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '7.3.1611')
+    runner.converge(described_recipe)
+  end
+
+  it 'converges successfully' do
+    expect { chef_run }.to_not raise_error
+  end
+
+  it 'installs httpd' do
+    expect(chef_run).to install_package 'httpd'
+  end
+
+  it 'enables the httpd service' do
+    expect(chef_run).to enable_service 'httpd'
+  end
+
+  it 'starts the httpd service' do
+    expect(chef_run).to start_service 'httpd'
+  end
+end
+
+# Inspec example
+
+describe package('httpd') do
+  it { should be_installed }
+end
+
+describe service('httpd') do
+  it { should be_enabled }
+  it { should be_running }
+end
+
+describe command('curl localhost') do
+  its('stdout') { should match /hello/ }
+end
+
+describe port(80) do
+  it { should be_listening }
+end
+
+# To run cookstyle tests
+cookstyle ./recipes
+
+# To run foodcritic tests
+foodcritic ./recipes
+
+#Chef Server
+rpm -Uvh chef-server-core.rpm
+ 
+chef-server-ctl reconfigure
+
+chef-server-ctl user-create USER_NAME FIRST_NAME LAST_NAME EMAIL 'PASSWORD' --filename FILE_NAME
+
+chef-server-ctl org-create short_name 'full_organization_name' --association_user user_name --filename ORGANIZATION-validator.pem
+
+# To install chef server ui
+chef-server-ctl install chef-manage
+chef-server-ctl reconfigure
+chef-manage-ctl reconfigure

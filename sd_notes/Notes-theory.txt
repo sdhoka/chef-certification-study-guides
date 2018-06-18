@@ -1,0 +1,122 @@
+
+Workstation is the computer from which you author your cookbooks and administer your network. It's typically the machine you use everyday. Although you'll be configuring Ubuntu, your workstation can be any OS you choose – be it Linux, macOS, or Windows.
+Chef server acts as a central repository for your cookbooks as well as for information about every node it manages. For example, the Chef server knows a node's fully qualified domain name (FQDN) and its platform.
+Node is any computer that is managed by a Chef server. Every node has the Chef client installed on it. The Chef client talks to the Chef server. A node can be any physical or virtual machine in your network.
+
+Chef is installed and configured in /etc/chef directory on the node. It contains the following files
+1. client.rb  - https://docs.chef.io/config_rb_client.html
+2. client.pem -  Generated to authenticate with chef-server except for first run
+3  first_boot.json
+4. ohai
+
+/var/chef/cache directory contains run log and synchronized cookbooks
+
+chefdk tools are installed under /opt/chefdk
+
+
+When Chef-client runs
+1. Get node ohai data
+2. Read config/content from client.rb file
+3. Authenticate 
+4. Synchronize cookbooks
+5. Loads cookbooks(attributes -> libraries .... -> recipe files). Resource collection: Build a  sequential list of resources
+6. Converge : Execute the resources in order
+7. If success, we send a node.save(json representation of node object) to chef server
+7. If failure, halt and raise an exception
+8. Upon success, send notification
+
+# Cookbook Contents
+attributes/default.rb
+defines default node attributes for the configuration.
+
+recipes/default.rb
+defines the cookbook's default recipe, which configures Apache and site content ownership.
+
+resources/site.rb
+defines a custom resource named site, which installs and configures Apache.
+
+libraries/matchers.rb
+contains the associated ChefSpec matcher for the site resource.
+
+spec/
+contains ChefSpec tests.
+
+.kitchen.yml
+defines the Test Kitchen configuration.
+
+metadata.rb and README.rb
+define metadata and documentation for the cookbook.
+
+Vagrantfile
+supports development tasks related to the cookbook.
+
+
+# Multiple Test kitchen files
+export KITCHEN_YAML="alternative_kitchen.yml"
+
+#  Best Practices for writing cookbooks
+1. Remove files you no longer need
+2. Ensure Foodcritic and Cookstyle tests pass
+3. Use Test Kitchen to verify your cookbook succeeds locally
+4. Create passing unit and integration tests
+5. Add appropriate metadata and documentation
+
+
+# http://www.foodcritic.io/ describes all the rules and how to fix errors
+
+# ChefSpec helps you quickly validate that your resources are properly defined. (documentation: http://www.rubydoc.info/github/sethvargo/chefspec)
+ It simulates the execution of your resources in memory without running your code on an actual instance.
+ 
+# To enable documentation mode for  rspec, run  
+rspec -f documentation
+
+# Chefspec instructor: franklin@chef.io
+# Chefspec Beyond essentials https://learn.chef.io/modules/best-practices-for-testing/writing-elegant-tests#/
+
+chefspec conventions when using expect method
+
+it 'converges successfully' do
+  expect { chef_run }.to_not raise_error
+end
+
+it 'installs httpd' do
+  expect(chef_run).to install_package 'httpd'
+end
+
+Use the format of the first example, which uses a Ruby block, when the test checks whether an exception, or error, is raised. Otherwise, use the second format, which passes the subject to test as a method argument
+For reasoning, refer https://learn.chef.io/modules/unit-test-with-chefspec/linux/create-a-multiplatform-cookbook#/
+To keep the tests organized by platform, you'll use a context block in Chefspec
+Fauxhai provides mock, or test, Ohai data for common platforms.
+A shared example enables you to define reusable test code. Think of a shared example as a template that contains placeholders that are filled in by other tests.
+
+# Guard and Guard rspec can be used to dynamically keep running chefspec test as you write it. 
+
+# InSpec provides a kind of integration testing, where you verify that multiple components function correctly together.
+Unlike ChefSpec, InSpec validates your configuration on actual systems via SSH or WinRM. ChefSpec helps you quickly validate whether your cookbooks define a valid configuration. InSpec tests validate the final configuration after chef-client runs.
+
+InSpec enables you to define profiles that test whether your systems meet your compliance and security requirements. But you can also include InSpec tests in your cookbook to validate just about any aspect of your system's configuration.
+# Most Chef cookbooks follow the Semantic Versioning scheme. Version numbers are typically written as MAJOR.MINOR.PATCH, where:
+MAJOR specifies a change that's incompatible with previous versions.
+MINOR specifies new functionality that's backwards-compatible with previous versions.
+PATCH specifies backwards-compatible bug fixes.
+
+# Cookstyle can be used for lint testing and static code analysis
+
+Code	Name	       Description
+.			Cookstyle found no potential issues.
+C	Convention	Cookstyle found code that potentially violates standard convention, for example, inconsistent use of indentation.
+W	Warning		Cookstyle found code that's valid, but potentially isn't what the programmer intended, such as comparing a variable to itself or defining unreachable code.
+E	Error		Cookstyle found a potential error, such as using an invalid character in a variable name.
+F	Fatal		Cookstyle found a potential unrecoverable error that would cause the program to crash, such as an exception that is not handled.
+
+To change cookstyle settings, create a configuration file called rubocop.yml.
+Rubocop default rules https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+
+
+# Foodcritic is another lint testing tool for Chef. Cookstyle is based on RuboCop; RuboCop can be run on any Ruby program, and isn't specific to Chef. Foodcritic identifies usage patterns that are specific to Chef code. Many Chef users run both tools as part of their lint testing.
+For example, foodcritic can identify places in code which can be optimized by chef specific resources while cookstyle will focus on ruby coding practices used in recipes
+You can specify which fc rules to run by specifying tags on the command line http://www.foodcritic.io/#choosing-rules-to-run
+Custom foodcritic rules can also be written (Community written rules http://www.foodcritic.io/#extra-rules)
+
+
+

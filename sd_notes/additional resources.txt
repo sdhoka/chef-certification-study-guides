@@ -1,0 +1,17 @@
+01 Linux Academy - Certified Chef Developer Basic Chef Fluency Badge- Lecture: Setting up the Lab environment
+https://gist.github.com/gsmurali/80dbad99e2d331bdbcbd09508116daa3
+
+02 Linux Academy - Certified Chef Developer Basic Chef Fluency Badge- Lecture: Understanding Chef and Chef Convergence
+https://gist.github.com/gsmurali/8d0bd3f2ee88f5950993fef91053adf1
+
+05 Linux Academy - Certified Chef Developer Basic Chef Fluency Badge- Lecture: Applying Chef Resources Hands On
+https://gist.github.com/gsmurali/0e80095ad831c3ff86995b64adaa7991
+
+06 Linux Academy - Certified Chef Developer Basic Chef Fluency Badge- Lecture: Working with not_if and only_if Guards
+https://gist.github.com/gsmurali/c45fa1913ef9ef5b79ba78df057e0272
+
+08 Linux Academy - Certified Chef Developer Basic Chef Fluency Badge- Lecture: Understanding Chef Recipes and Run Lists
+https://gist.github.com/gsmurali/d7159fabbcc3e0535fa09d50472445f8
+
+09 Linux Academy - Certified Chef Developer Basic Chef Fluency Badge- Lecture: Understanding Chef Cookbooks & Generating a Cookbook
+https://gist.github.com/gsmurali/1116363c1cae293bccc818d15f857df2
